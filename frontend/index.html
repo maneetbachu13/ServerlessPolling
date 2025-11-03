@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serverless Polling System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🗳️ Serverless Polling System</h1>
+
+    <!-- Create Poll Section -->
+    <div class="section">
+      <h2>Create a Poll</h2>
+      <input id="question" placeholder="Enter your question" />
+      <input id="option1" placeholder="Option 1" />
+      <input id="option2" placeholder="Option 2" />
+      <button onclick="createPoll()">Create Poll</button>
+    </div>
+
+    <!-- Vote Section -->
+    <div class="section" id="voteSection" style="display: none;">
+      <h2 id="pollQuestion"></h2>
+      <div id="options"></div>
+      <button onclick="getResults()">View Results</button>
+    </div>
+
+    <!-- Results Section -->
+    <div class="section" id="resultsSection" style="display: none;">
+      <h2>Poll Results</h2>
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

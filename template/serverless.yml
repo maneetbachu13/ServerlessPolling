@@ -1,0 +1,55 @@
+service: serverless-polling-system
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  environment:
+    TABLE_NAME: PollsTable
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:GetItem
+      Resource: arn:aws:dynamodb:ap-south-1:*:table/PollsTable
+
+functions:
+  createPollFunction:
+    handler: backend/createPollFunction/index.handler
+    events:
+      - http:
+          path: create
+          method: post
+          cors: true
+
+  castVoteFunction:
+    handler: backend/castVoteFunction/index.handler
+    events:
+      - http:
+          path: vote
+          method: post
+          cors: true
+
+  getResultsFunction:
+    handler: backend/getResultsFunction/index.handler
+    events:
+      - http:
+          path: results
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    PollsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PollsTable
+        AttributeDefinitions:
+          - AttributeName: pollId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pollId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

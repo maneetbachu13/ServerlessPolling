@@ -1,0 +1,61 @@
+const API_BASE = "https://<YOUR_API_GATEWAY_URL>"; // Replace with your API Gateway endpoint
+let currentPollId = null;
+
+// Create Poll
+async function createPoll() {
+  const question = document.getElementById("question").value;
+  const option1 = document.getElementById("option1").value;
+  const option2 = document.getElementById("option2").value;
+
+  if (!question || !option1 || !option2) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  const response = await fetch(`${API_BASE}/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question, options: [option1, option2] }),
+  });
+
+  const data = await response.json();
+  currentPollId = data.pollId;
+
+  document.getElementById("pollQuestion").innerText = question;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  data.options.forEach((opt) => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => castVote(opt);
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById("voteSection").style.display = "block";
+}
+
+// Cast Vote
+async function castVote(option) {
+  await fetch(`${API_BASE}/vote`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pollId: currentPollId, option }),
+  });
+  alert("Vote recorded successfully!");
+}
+
+// Get Results
+async function getResults() {
+  const response = await fetch(`${API_BASE}/results?pollId=${currentPollId}`);
+  const data = await response.json();
+
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
+  Object.entries(data.votes).forEach(([option, count]) => {
+    const div = document.createElement("div");
+    div.textContent = `${option}: ${count} votes`;
+    resultsDiv.appendChild(div);
+  });
+
+  document.getElementById("resultsSection").style.display = "block";
+}
